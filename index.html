@@ -41,6 +41,9 @@
     <!-- 📸 Foto circular al centro del corazón grande -->
     <img src="IMG_8268.jpeg" alt="Nuestra foto" class="heart-photo">
 
+    <!-- Corazones que caen: canvas aparte, por delante de la foto -->
+    <canvas id="fallingCanvas"></canvas>
+
     <div class="ground-line"></div>
   </div>
 </div>
@@ -94,11 +97,15 @@ typeWriter();
 /* ---------- Árbol de corazones (canvas) ---------- */
 const treeCanvas = document.getElementById('treeCanvas');
 const tctx = treeCanvas.getContext('2d');
+const fallingCanvas = document.getElementById('fallingCanvas');
+const fctx = fallingCanvas.getContext('2d');
 
 function resizeTreeCanvas(){
   const wrap = treeCanvas.parentElement;
   treeCanvas.width = wrap.clientWidth;
   treeCanvas.height = wrap.clientHeight;
+  fallingCanvas.width = wrap.clientWidth;
+  fallingCanvas.height = wrap.clientHeight;
   drawHeartTree();
 }
 
@@ -243,24 +250,25 @@ function drawFallingHearts(){
     const y = p.originY + p.windOffset * p.fallRatio + Math.sin(p.bob*0.6) * p.bobRange;
     const size = Math.max(1.5, p.size * (1 - progress*0.35));
 
-    tctx.globalAlpha = Math.max(0, 1 - progress) * 0.9;
-    drawHeart(tctx, x, y, size, p.rot, p.color);
-    tctx.globalAlpha = 1;
+    fctx.globalAlpha = Math.max(0, 1 - progress) * 0.9;
+    drawHeart(fctx, x, y, size, p.rot, p.color);
+    fctx.globalAlpha = 1;
   });
 }
 
 let fallingLoopStarted = false;
 function fallingLoop(){
-  const w = treeCanvas.width;
-  const h = treeCanvas.height;
-  tctx.clearRect(0,0,w,h);
-  tctx.drawImage(offscreen, 0, 0);
+  const w = fallingCanvas.width;
+  const h = fallingCanvas.height;
+  fctx.clearRect(0,0,w,h);
   drawFallingHearts();
   requestAnimationFrame(fallingLoop);
 }
 
 function drawHeartTree(){
   drawStaticTree();
+  tctx.clearRect(0,0,treeCanvas.width,treeCanvas.height);
+  tctx.drawImage(offscreen, 0, 0);
   if(!fallingLoopStarted){
     fallingLoopStarted = true;
     fallingLoop();
@@ -440,23 +448,33 @@ body{
   width:100%;
   height:100%;
   display:block;
-  z-index:3;         /* por encima del texto, para que los corazones caigan sobre las letras */
+  z-index:3;         /* árbol estático: por encima del texto, por debajo de la foto */
   pointer-events:none;
 }
 
 /* 📸 Foto circular al centro del corazón grande */
 .heart-photo{
   position:absolute;
-  top:46%;
+  top:40%;
   left:68%;
   width:14.5%;                /* 1/4 del ancho del corazón grande (58% de la tarjeta) */
   aspect-ratio: 1 / 1;
   transform: translate(-50%, -50%);
   border-radius:50%;
   object-fit:cover;
-  z-index:4;                  /* por delante del árbol Y de los corazones que caen */
+  z-index:4;                  /* por delante del árbol estático, por debajo de los corazones que caen */
   border:4px solid #fff;
   box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  pointer-events:none;
+}
+
+#fallingCanvas{
+  position:absolute;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  display:block;
+  z-index:5;         /* corazones que caen: siempre por delante de la foto */
   pointer-events:none;
 }
 
