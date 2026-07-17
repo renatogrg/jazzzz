@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi Jazzz ❤️</title>
+<title>Cumple ❤️</title>
 <style>
   /* ============================================================
      ⚙️ CONFIGURACIÓN RÁPIDA — edita solo esta parte si quieres
      ============================================================ */
   :root{
-    --bg1:#2e0a1a;
-    --bg2:#6b1530;
+    --bg1:#7a0f3a;
+    --bg2:#e6236f;
     --card-bg:#f3e9df;
-    --heart-color:#7b1e3a;
-    --heart-color2:#a83250;
-    --heart-color3:#d98ba0;
-    --heart-color4:#4a1024;
-    --heart-color5:#f0c9d3;
+    --heart-color:#e0163f;
+    --heart-color2:#ff6f91;
+    --heart-color3:#ffb3c6;
+    --heart-color4:#b3092b;
+    --heart-color5:#ffd6de;
     --title-color:#ffffff;
   }
 </style>
@@ -25,31 +25,25 @@
 
 <div class="phone">
   <div class="top-bar">
-    <span class="dot"></span> De tu osito <span class="dot"></span>
+    <span class="dot"></span> De tu hermano que te quiere mucho <span class="dot"></span>
   </div>
 
   <div class="card">
     <div class="text-block">
       <p class="msg" id="msg"></p>
       <button id="musicBtn" class="music-btn" type="button">
-        <span id="musicIcon">▶</span> Sparks
+        <span id="musicIcon">▶</span> Francés Limón
       </button>
     </div>
 
     <canvas id="treeCanvas"></canvas>
-
-    <!-- 📸 Foto circular al centro del corazón grande -->
-    <img src="IMG_8268.jpeg" alt="Nuestra foto" class="heart-photo">
-
-    <!-- Corazones que caen: canvas aparte, por delante de la foto -->
-    <canvas id="fallingCanvas"></canvas>
 
     <div class="ground-line"></div>
   </div>
 </div>
 
 <!-- 🎵 Audio local: asegúrate que el nombre coincida EXACTO con tu archivo mp3 -->
-<audio id="bgAudio" src="Coldplay - Sparks.mp3" preload="none" loop></audio>
+<audio id="bgAudio" src="Francés Limón - Enanitos Verdes (Letra).mp3" preload="none" loop></audio>
 
 <script>
 /* ---------- Música local (mp3 en la misma carpeta) ---------- */
@@ -63,13 +57,6 @@ musicBtn.addEventListener('click', () => {
   musicIcon.textContent = playing ? '⏸' : '▶';
   playing ? bgAudio.play() : bgAudio.pause();
 });
-
-function dockMusicBtn(){
-  const textBlockRect = document.querySelector('.text-block').getBoundingClientRect();
-  const groundRect = document.querySelector('.ground-line').getBoundingClientRect();
-  const distFromTextBlockBottom = textBlockRect.bottom - groundRect.top;
-  musicBtn.style.bottom = (distFromTextBlockBottom + 3) + 'px';
-}
 </script>
 
 <canvas id="bgHearts"></canvas>
@@ -79,13 +66,12 @@ function dockMusicBtn(){
    ⚙️ CONFIGURACIÓN — cambia estos valores
    ============================================================ */
 const CONFIG = {
-  titulo: "Para mi chica ❤️",
+  titulo: "Para mi hermanita favorita ❤️",
   fechaCumple: "2026-08-15T00:00:00",     // fecha objetivo del cumpleaños (YYYY-MM-DDTHH:MM:SS)
   parrafos: [
-    "Gracias por ser mi princesita, siempre quiero estar a tu lado.",
-    "¡Feliz 7 meses mi vida!, quiero que sean 7 meses y muchos más.",
+    "Gracias por ser mi hermanita, por sacarme siempre una sonrisa y por alegrarme los días. Te quiero muchísimo.",
     "Gracias por existir.",
-    "¡Te amoooooo!"
+    "¡Feliz Cumpleañoooos Valeeee!"
   ]
 };
 
@@ -98,9 +84,6 @@ function typeWriter(){
     msgEl.textContent = fullText.slice(0, i);
     i++;
     setTimeout(typeWriter, 35);
-  } else {
-    musicBtn.classList.add('docked');
-    dockMusicBtn();
   }
 }
 typeWriter();
@@ -108,15 +91,11 @@ typeWriter();
 /* ---------- Árbol de corazones (canvas) ---------- */
 const treeCanvas = document.getElementById('treeCanvas');
 const tctx = treeCanvas.getContext('2d');
-const fallingCanvas = document.getElementById('fallingCanvas');
-const fctx = fallingCanvas.getContext('2d');
 
 function resizeTreeCanvas(){
   const wrap = treeCanvas.parentElement;
   treeCanvas.width = wrap.clientWidth;
   treeCanvas.height = wrap.clientHeight;
-  fallingCanvas.width = wrap.clientWidth;
-  fallingCanvas.height = wrap.clientHeight;
   drawHeartTree();
 }
 
@@ -261,25 +240,24 @@ function drawFallingHearts(){
     const y = p.originY + p.windOffset * p.fallRatio + Math.sin(p.bob*0.6) * p.bobRange;
     const size = Math.max(1.5, p.size * (1 - progress*0.35));
 
-    fctx.globalAlpha = Math.max(0, 1 - progress) * 0.9;
-    drawHeart(fctx, x, y, size, p.rot, p.color);
-    fctx.globalAlpha = 1;
+    tctx.globalAlpha = Math.max(0, 1 - progress) * 0.9;
+    drawHeart(tctx, x, y, size, p.rot, p.color);
+    tctx.globalAlpha = 1;
   });
 }
 
 let fallingLoopStarted = false;
 function fallingLoop(){
-  const w = fallingCanvas.width;
-  const h = fallingCanvas.height;
-  fctx.clearRect(0,0,w,h);
+  const w = treeCanvas.width;
+  const h = treeCanvas.height;
+  tctx.clearRect(0,0,w,h);
+  tctx.drawImage(offscreen, 0, 0);
   drawFallingHearts();
   requestAnimationFrame(fallingLoop);
 }
 
 function drawHeartTree(){
   drawStaticTree();
-  tctx.clearRect(0,0,treeCanvas.width,treeCanvas.height);
-  tctx.drawImage(offscreen, 0, 0);
   if(!fallingLoopStarted){
     fallingLoopStarted = true;
     fallingLoop();
@@ -323,7 +301,6 @@ let resizeRAF = null;
 const treeResizeObserver = new ResizeObserver(() => {
   if(resizeRAF) cancelAnimationFrame(resizeRAF);
   resizeRAF = requestAnimationFrame(resizeTreeCanvas);
-  if(musicBtn.classList.contains('docked')) dockMusicBtn();
 });
 treeResizeObserver.observe(cardEl);
 
@@ -430,7 +407,7 @@ body{
   border-radius: 22px;
   padding: 20px 18px 16px;
   position:relative;
-  min-height: 305px;
+  min-height: 300px;
   box-shadow: 0 15px 40px rgba(0,0,0,0.35);
   overflow:hidden;
 }
@@ -443,7 +420,7 @@ body{
 
 .msg{
   font-size:13px;
-  line-height:1.3;
+  line-height:1.5;
   color:#3a2a2a;
   min-height: 20px;
   margin-bottom: 8px;
@@ -460,33 +437,7 @@ body{
   width:100%;
   height:100%;
   display:block;
-  z-index:3;         /* árbol estático: por encima del texto, por debajo de la foto */
-  pointer-events:none;
-}
-
-/* 📸 Foto circular al centro del corazón grande */
-.heart-photo{
-  position:absolute;
-  top:40%;
-  left:68%;
-  width:17.5%;                /* 1/4 del ancho del corazón grande (58% de la tarjeta) */
-  aspect-ratio: 1 / 1;
-  transform: translate(-50%, -50%);
-  border-radius:50%;
-  object-fit:cover;
-  z-index:4;                  /* por delante del árbol estático, por debajo de los corazones que caen */
-  border:4px solid #fff;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
-  pointer-events:none;
-}
-
-#fallingCanvas{
-  position:absolute;
-  top:0; left:0;
-  width:100%;
-  height:100%;
-  display:block;
-  z-index:5;         /* corazones que caen: siempre por delante de la foto */
+  z-index:3;         /* por encima del texto, para que los corazones caigan sobre las letras */
   pointer-events:none;
 }
 
@@ -520,10 +471,6 @@ body{
   background: rgba(224, 22, 63, 0.2);
 }
 
-.music-btn.docked{
-  position:absolute;
-  left:0;
-}
 
 </style>
 
