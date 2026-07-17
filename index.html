@@ -38,6 +38,9 @@
 
     <canvas id="treeCanvas"></canvas>
 
+    <!-- 📸 Foto circular al centro del corazón grande -->
+    <img src="IMG_8268.jpeg" alt="Nuestra foto" class="heart-photo">
+
     <div class="ground-line"></div>
   </div>
 </div>
@@ -71,8 +74,7 @@ const CONFIG = {
   parrafos: [
     "Gracias por ser mi princesita, siempre quiero estar a tu lado.",
     "¡Feliz 7 meses mi vida!, quiero que sean 7 meses y muchos más.",
-    "Gracias por existir.",
-    "¡Te amoooooo!"
+    "Gracias por existir. ¡Te amoooooo!",
   ]
 };
 
@@ -439,6 +441,22 @@ body{
   height:100%;
   display:block;
   z-index:3;         /* por encima del texto, para que los corazones caigan sobre las letras */
+  pointer-events:none;
+}
+
+/* 📸 Foto circular al centro del corazón grande */
+.heart-photo{
+  position:absolute;
+  top:46%;
+  left:68%;
+  width:14.5%;                /* 1/4 del ancho del corazón grande (58% de la tarjeta) */
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  border-radius:50%;
+  object-fit:cover;
+  z-index:4;                  /* por delante del árbol Y de los corazones que caen */
+  border:4px solid #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
   pointer-events:none;
 }
 
